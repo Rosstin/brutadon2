@@ -37,16 +37,16 @@ var visited;
 // These are messages that Alexa says to the user during conversation
 
 // This is the intial welcome message
-var welcomeMessage = "Welcome to you got this brutadon. Are you ready to play?";
+var welcomeMessage = "Brutadon followed in Gromyulox's wake of destruction. Soon, the two stood face to face in the skyscraper-filled city of Franklin.";
 
 // This is the message that is repeated if the response to the initial welcome message is not heard
-var repeatWelcomeMessage = "Say yes to start the game or no to quit.";
+var repeatWelcomeMessage = "Say yes to play";
 
 // this is the message that is repeated if Alexa does not hear/understand the reponse to the welcome message
 var promptToStartMessage = "Say yes to continue, or no to end the game.";
 
 // This is the prompt during the game when Alexa doesnt hear or understand a yes / no reply
-var promptToSayYesNo = "Say yes or no to answer the question.";
+var promptToSayYesNo = "Say wreck em, pump it up, you got this, or hold back.";
 
 // This is the response to the user after the final question when Alex decides on what group choice the user should be given
 var decisionMessage = "I think you would make a good";
@@ -121,7 +121,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.handler.state = states.ASKMODE;
 
         // ask first question, the response will be handled in the askQuestionHandler
-        var message = events1[0].prompt.substring(0,120);
+        var message = events1[0].prompt;//.substring(0,120);
 
         // record the node we are on
         this.attributes.currentNode = START_NODE;
@@ -317,14 +317,14 @@ var helper = {
         //var message = messageResponse+" "+events1[nextNodeId].prompt;
 
         // fix the message length problem or make a spreadsheet of shorter jokes
-		var message = messageResponse.substring(0,120) + " " + events1[nextNodeId].prompt.substring(0,120);
+		var message = messageResponse + " " + events1[nextNodeId];
 
         //var message = events1[nextNodeId].prompt;
 
         // add a tutorial state and ending state
         if(nextNodeId > 32){
             context.handler.state = states.ENDMODE;
-            message = "You got the end man";
+            message = "Brutadon is the victor!";
         }
 
         // set the current node to next node we want to go to

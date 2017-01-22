@@ -105,6 +105,7 @@ var newSessionHandler = {
 var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.YesIntent': function () {
 
+    	/*
         // ---------------------------------------------------------------
         // check to see if there are any loops in the node tree - this section can be removed in production code
         visited = [nodes.length];
@@ -115,12 +116,12 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
              this.emit(':tell', loopsDetectedMessage);
         }
         // ---------------------------------------------------------------
-
+		*/
         // set state to asking questions
         this.handler.state = states.ASKMODE;
 
         // ask first question, the response will be handled in the askQuestionHandler
-        var message = helper.getSpeechForNode(START_NODE);
+        var message = events1[0].prompt.substring(0,120);
 
         // record the node we are on
         this.attributes.currentNode = START_NODE;
@@ -275,10 +276,52 @@ var helper = {
 
         var nextNodeId = context.attributes.currentNode+1;
 
-        // get the speech for the child node
-        var message = events1[nextNodeId].prompt;
+        var numberOfDestinationMessage;
 
-        if(nextNodeId > 6){
+        if(shout==0){
+        	numberOfDestinationMessage = events1[context.attributes.currentNode].wreck;
+        }
+        if(shout==1){
+        	numberOfDestinationMessage = events1[context.attributes.currentNode].pump;
+        }
+        if(shout==2){
+        	numberOfDestinationMessage = events1[context.attributes.currentNode].got;
+        }
+        if(shout==3){
+        	numberOfDestinationMessage = events1[context.attributes.currentNode].hold;
+        }
+
+        var messageResponse;
+
+        if(numberOfDestinationMessage == "1"){
+        	messageResponse = events1[context.attributes.currentNode].t1;
+        }
+        if(numberOfDestinationMessage == "2"){
+        	messageResponse = events1[context.attributes.currentNode].t2;
+        }
+        if(numberOfDestinationMessage == "3"){
+        	messageResponse = events1[context.attributes.currentNode].t3;
+        }
+        if(numberOfDestinationMessage == "4"){
+        	messageResponse = events1[context.attributes.currentNode].t4;
+        }
+        if(numberOfDestinationMessage == "5"){
+        	messageResponse = events1[context.attributes.currentNode].t5;
+        }
+        if(numberOfDestinationMessage == "6"){
+        	messageResponse = events1[context.attributes.currentNode].t6;
+        }
+
+        // get the speech for the child node
+        //var message = messageResponse+" "+events1[nextNodeId].prompt;
+
+
+		var message = messageResponse.substring(0,120) + " " + events1[nextNodeId].prompt.substring(0,120);
+
+        //var message = events1[nextNodeId].prompt;
+
+
+        if(nextNodeId > 32){
             context.handler.state = states.ENDMODE;
             message = "You got the end man";
         }

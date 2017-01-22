@@ -317,7 +317,7 @@ var helper = {
         //var message = messageResponse+" "+events1[nextNodeId].prompt;
 
         // fix the message length problem or make a spreadsheet of shorter jokes
-		var message = messageResponse + " " + events1[nextNodeId];
+		var message = messageResponse + " " + events1[nextNodeId].prompt;
 
         //var message = events1[nextNodeId].prompt;
 

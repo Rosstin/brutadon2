@@ -271,29 +271,15 @@ var helper = {
     yesOrNo: function (context, reply, shout) {
 
         // this is a question node so we need to see if the user picked yes or no
-        var nextNodeId = helper.getNextNode(context.attributes.currentNode, reply);
+        //var nextNodeId = helper.getNextNode(context.attributes.currentNode, reply);
 
-        // error in node data
-        if (nextNodeId == -1)
-        {
-            context.handler.state = states.STARTMODE;
-
-            // the current node was not found in the nodes array
-            // this is due to the current node in the nodes array having a yes / no node id for a node that does not exist
-            context.emit(':tell', nodeNotFoundMessage, nodeNotFoundMessage);
-        }
+        var nextNodeId = context.attributes.currentNode+1;
 
         // get the speech for the child node
-        var message = helper.getSpeechForNode(nextNodeId);
+        var message = events1[nextNodeId].prompt;
 
-        // have we made a decision
-        if (helper.isAnswerNode(nextNodeId) === true) {
-
-            // set the game state to description mode
+        if(nextNodeId > 6){
             context.handler.state = states.ENDMODE;
-
-            // append the play again prompt to the decision and speak it
-            //message = decisionMessage + ' ' + message + ' ,' + playAgainMessage;
             message = "You got the end man";
         }
 

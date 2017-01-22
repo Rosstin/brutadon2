@@ -1,11 +1,3 @@
-/**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
- * The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well as
- * testing instructions are located at http://amzn.to/1LzFrj6
- *
- * For additional samples, visit the Alexa Skills Kit Getting Started guide at
- * http://amzn.to/1LGWsLG
- */
 
 var events1 = require('./events1').events1;
 
@@ -14,7 +6,8 @@ var Alexa = require('alexa-sdk');
 var states = {
     STARTMODE: '_STARTMODE',                // Prompt the user to start or restart the game.
     ASKMODE: '_ASKMODE',                    // Alexa is asking user the questions.
-    DESCRIPTIONMODE: '_DESCRIPTIONMODE'     // Alexa is describing the final choice and prompting to start again or quit
+    DESCRIPTIONMODE: '_DESCRIPTIONMODE',     // Alexa is describing the final choice and prompting to start again or quit
+    ENDMODE: '_ENDMODE'
 };
 
 
@@ -87,7 +80,7 @@ var START_NODE = 1;
 // Called when the session starts.
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, askQuestionHandlers, descriptionHandlers);
+    alexa.registerHandlers(newSessionHandler, startGameHandlers, askQuestionHandlers, descriptionHandlers, endHandlers);
     alexa.execute();
 };
 
@@ -95,7 +88,7 @@ exports.handler = function (event, context, callback) {
 var newSessionHandler = {
   'LaunchRequest': function () {
     this.handler.state = states.STARTMODE;
-    this.emit(':ask', "Welcome to Brutadon. Say yes to begin.");//, repeatWelcomeMessage);
+    this.emit(':ask', welcomeMessage);//, repeatWelcomeMessage);
   },'AMAZON.HelpIntent': function () {
     this.handler.state = states.STARTMODE;
     this.emit(':ask', helpMessage, helpMessage);
@@ -161,16 +154,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 // response and then ask another question. If we have asked more than the requested number of questions Alexa will
 // make a choice, inform the user and then ask if they want to play again
 var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
-
-	//intent1
-	  // helper builds the response
-	//intent2
-	//intent3
-	//intent4
-	//intent5
-	//intent6
-
-    'WreckEmIntent': function(){
+   'WreckEmIntent': function(){
         // Handle Yes intent.
         helper.yesOrNo(this,'yes', 0);
         //helper.fourWays(this,0);
@@ -190,13 +174,14 @@ var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
         helper.yesOrNo(this,'no', 3);
         //helper.fourWays(this,4);
     },
+
     'AMAZON.YesIntent': function () {
         // Handle Yes intent.
         helper.yesOrNo(this,'yes', 0);
     },
     'AMAZON.NoIntent': function () {
         // Handle No intent.
-         helper.yesOrNo(this, 'no', 3);
+         helper.yesOrNo(this, 'no', 1);
     },
     'AMAZON.HelpIntent': function () {
         this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
@@ -215,6 +200,19 @@ var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
     'Unhandled': function () {
         this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
     }
+});
+
+var endHandlers = Alexa.CreateStateHandler(states.ENDMODE, {
+   'WreckEmIntent': function(){
+   		this.handler.state = states.STARTMODE;
+   		this.emit(':ask', "Wreck em by starting over");
+    },
+    'Unhandled': function () {
+   		this.handler.state = states.STARTMODE;
+   		this.emit(':ask', "Unhandled, and start over");
+    }
+
+
 });
 
 // user has heard the final choice and has been asked if they want to hear the description or to play again
@@ -269,25 +267,11 @@ var helper = {
         context.emit(':ask', message, message);
     },
 
-    fourWays: function (context, reply) {
-        var nextEventId = helper.getNextEvent(context.attributes.currentNode, reply);
-
-        // get the speech for the child node
-        var message = helper.getSpeechForEvent(nextEventId);
-
-        // set the current node to next node we want to go to
-        context.attributes.currentNode = nextNodeId;
-
-        context.emit(':ask', message, message);    
-    },
-
     // logic to provide the responses to the yes or no responses to the main questions
     yesOrNo: function (context, reply, shout) {
 
         // this is a question node so we need to see if the user picked yes or no
         var nextNodeId = helper.getNextNode(context.attributes.currentNode, reply);
-
-        //var nextEventId = helper.getNextEvent(context.attributes.currentNode, reply);
 
         // error in node data
         if (nextNodeId == -1)
@@ -302,16 +286,15 @@ var helper = {
         // get the speech for the child node
         var message = helper.getSpeechForNode(nextNodeId);
 
-        //message = helper.getEventResponse(nextEventId, shout);
-
         // have we made a decision
         if (helper.isAnswerNode(nextNodeId) === true) {
 
             // set the game state to description mode
-            context.handler.state = states.DESCRIPTIONMODE;
+            context.handler.state = states.ENDMODE;
 
             // append the play again prompt to the decision and speak it
-            message = decisionMessage + ' ' + message + ' ,' + playAgainMessage;
+            //message = decisionMessage + ' ' + message + ' ,' + playAgainMessage;
+            message = "You got the end man";
         }
 
         // set the current node to next node we want to go to
@@ -341,31 +324,6 @@ var helper = {
         }
         return speechNotFoundMessage + nodeId;
     },
-    // returns the speech for the provided node id
-    getSpeechForEvent: function (nodeId) {
-
-        return events1[nodeId].prompt;
-        /*
-
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].node == nodeId) {
-                return nodes[i].message;
-            }
-        }
-        return speechNotFoundMessage + nodeId;*/
-    },
-    getEventResult: function (nodeId,intent) {
-
-        return events1[nodeId].prompt;
-        /*
-
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].node == nodeId) {
-                return nodes[i].message;
-            }
-        }
-        return speechNotFoundMessage + nodeId;*/
-    },
 
     // checks to see if this node is an choice node or a decision node
     isAnswerNode: function (nodeId) {
@@ -379,80 +337,6 @@ var helper = {
         }
         return false;
     },
-
-    getEventResponse: function(nodeId, response){
-        var number = getEventNumber(nodeId, response);
-        if(number == "1"){
-            return "I love the number one";
-        }
-        if(number == "2"){
-            return "number two is great";
-        }
-        if(number == "3"){
-            return "number three rocks";
-        }
-        if(number == "4"){
-            return "four galore";
-        }
-        if(number == "5"){
-            return "five alive";
-        }
-        if(number == "6"){
-            return "six mix";
-        }
-
-
-    },
-
-    getEventNumber: function (nodeId, response){
-        if(response==0){
-            return events1[nodeId].wreck;
-        }
-        if(response==1){
-            return events1[nodeId].pump;
-        }
-        if(response==2){
-            return events1[nodeId].got;
-        }
-        if(response==3){
-            return events1[nodeId].hold;
-        }
-    },
-
-
-
-    getNextEvent: function (nodeId, reply) {
-
-        /*
-        if(response==0){
-            return events1[nodeId].wreck;
-        }
-        if(response==1){
-            return events1[nodeId].pump;
-        }
-        if(response==2){
-            return events1[nodeId].got;
-        }
-        if(response==3){
-            return events1[nodeId].hold;
-        }*/
-
-        //events1[nodeId]
-
-        return (nodeId+1);
-        /*
-        for (var i = 0; i < events1.length; i++) {
-            if (nodes[i].node == nodeId) {
-                if (yesNo == "yes") {
-                    return nodes[i].yes;
-                }
-                return nodes[i].no;
-            }
-        }
-        // error condition, didnt find a matching node id. Cause will be a yes / no entry in the array but with no corrosponding array entry
-        return -1;*/
-    },
-
 
     // gets the next node to traverse to based on the yes no response
     getNextNode: function (nodeId, yesNo) {

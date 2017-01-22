@@ -6,6 +6,24 @@
       "intent": "AMAZON.NoIntent",
       "slots": []
     }, {
+      "intent": "WreckEmIntent",
+      "slots": []
+    }, {
+      "intent": "PumpItUpIntent",
+      "slots": []
+    }, {
+      "intent": "YouGotThisIntent",
+      "slots": []
+    }, {
+      "intent": "HoldBackIntent",
+      "slots": []
+    }, {
+      "intent": "NoInPutIntent",
+      "slots": []
+    }, {
+      "intent": "UnrecognizedIntent",
+      "slots": []
+    }, {
 		"intent": "AMAZON.HelpIntent",
 		"slots": []
 	}, {

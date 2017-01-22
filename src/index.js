@@ -75,6 +75,9 @@ var utterancePlayAgain = "play again";
 // the first node that we will use
 var START_NODE = 1;
 
+var EVENTS1_LENGTH = 32;
+
+
 // --------------- Handlers -----------------------
 
 // Called when the session starts.
@@ -125,6 +128,8 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
         // record the node we are on
         this.attributes.currentNode = START_NODE;
+
+        //this.attributes.usedNodes = [];
 
         // ask the first question
         this.emit(':ask', message, message);
@@ -275,7 +280,9 @@ var helper = {
         //var nextNodeId = helper.getNextNode(context.attributes.currentNode, reply);
 
         // todo this is randomized and we remember which ones we saw
-        var nextNodeId = context.attributes.currentNode+1;
+        //var nextNodeId = context.attributes.currentNode;
+
+        var nextNodeId = Math.floor(Math.random()*EVENTS1_LENGTH);
 
         var numberOfDestinationMessage;
 

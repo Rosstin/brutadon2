@@ -274,6 +274,7 @@ var helper = {
         // this is a question node so we need to see if the user picked yes or no
         //var nextNodeId = helper.getNextNode(context.attributes.currentNode, reply);
 
+        // todo this is randomized and we remember which ones we saw
         var nextNodeId = context.attributes.currentNode+1;
 
         var numberOfDestinationMessage;
@@ -315,12 +316,12 @@ var helper = {
         // get the speech for the child node
         //var message = messageResponse+" "+events1[nextNodeId].prompt;
 
-
+        // fix the message length problem or make a spreadsheet of shorter jokes
 		var message = messageResponse.substring(0,120) + " " + events1[nextNodeId].prompt.substring(0,120);
 
         //var message = events1[nextNodeId].prompt;
 
-
+        // add a tutorial state and ending state
         if(nextNodeId > 32){
             context.handler.state = states.ENDMODE;
             message = "You got the end man";

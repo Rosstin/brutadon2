@@ -292,26 +292,7 @@ var helper = {
         	numberOfDestinationMessage = events1[context.attributes.currentNode].hold;
         }
 
-        var messageResponse;
-
-        if(numberOfDestinationMessage == "1"){
-        	messageResponse = events1[context.attributes.currentNode].t1;
-        }
-        if(numberOfDestinationMessage == "2"){
-        	messageResponse = events1[context.attributes.currentNode].t2;
-        }
-        if(numberOfDestinationMessage == "3"){
-        	messageResponse = events1[context.attributes.currentNode].t3;
-        }
-        if(numberOfDestinationMessage == "4"){
-        	messageResponse = events1[context.attributes.currentNode].t4;
-        }
-        if(numberOfDestinationMessage == "5"){
-        	messageResponse = events1[context.attributes.currentNode].t5;
-        }
-        if(numberOfDestinationMessage == "6"){
-        	messageResponse = events1[context.attributes.currentNode].t6;
-        }
+        var messageResponse = events1[context.attributes.currentNode]["t"+numberOfDestinationMessage];
 
         // get the speech for the child node
         //var message = messageResponse+" "+events1[nextNodeId].prompt;
